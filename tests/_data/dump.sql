@@ -54,6 +54,7 @@ CREATE TABLE `tasks` (
   `updated_at` datetime DEFAULT NULL,
   `assigned_name` text,
   `assigned_phone` text,
+  `status` VARCHAR(255) DEFAULT 'pending',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 

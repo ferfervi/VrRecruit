@@ -1,3 +1,4 @@
+
 <h1>
 <ng-pluralize count="tasks.length"
                  when="{'0': 'Sorry, there are no tasks',
@@ -6,13 +7,13 @@
 </ng-pluralize>
 </h1>
 
-<table>
+<table class="table">
   <tr>
     <th>Id</th>
     <th>Deadline</th>
     <th>Assignee</th>
     <th>Phone</th>
-    <th></th>
+    <th>Status</th>
     <th></th>
     <th></th>
   </tr>
@@ -22,10 +23,18 @@
     <td>{{task.deadline}}</td>
     <td>{{task.assigned_name}}</td>
     <td>{{task.assigned_phone}}</td>
+    <td>{{task.status}}</td>
     <td>
       <a href="" class="btn" disabled>
         Show
       </a>
     </td>
   </tr>
+  
 </table>
+
+
+
+
+
+

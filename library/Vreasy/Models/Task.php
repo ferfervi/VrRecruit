@@ -13,13 +13,21 @@ class Task extends Base
     protected $assigned_phone;
     protected $created_at;
     protected $updated_at;
+    
+    //Creating text field for storing task status (quicker approach). Ideally this would be a numerical value where we can map different status
+    protected $status;
 
+    //let's define the constants for the values of the status
+    const TASK_ACCEPTED = "accepted";
+    const TASK_REJECTED = "rejected";
+    const TASK_PENDING = "pending";
+    
     public function __construct()
     {
         // Validation is done run by Valitron library
         $this->validates(
             'required',
-            ['deadline', 'assigned_name', 'assigned_phone']
+            ['deadline', 'assigned_name', 'assigned_phone','status']
         );
         $this->validates(
             'date',
@@ -54,6 +62,15 @@ class Task extends Base
     public static function findOrInit($id)
     {
         $task = new Task();
+        if ($tasksFound = static::where(['id' => (int)$id])) {
+            $task = array_pop($tasksFound);
+        }
+        return $task;
+    }
+    
+     public static function findById($id)
+    {
+        $task = null;
         if ($tasksFound = static::where(['id' => (int)$id])) {
             $task = array_pop($tasksFound);
         }
