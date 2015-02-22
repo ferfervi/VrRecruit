@@ -1,40 +1,80 @@
 
-<h1>
-<ng-pluralize count="tasks.length"
-                 when="{'0': 'Sorry, there are no tasks',
-                     'one': 'Listing 1 Task.',
-                     'other': 'Listing {} Tasks'}">
-</ng-pluralize>
-</h1>
+<div class="alert alert-info">
+ <p><b>Info:</b>&nbsp;Click on the "Show" button to display the list of events linked to a task.</p>
+ <p> Displayed when the task was assigned (marked as pending) and the user reply (accepted or rejected).</p>
+</div>
 
-<table class="table">
-  <tr>
-    <th>Id</th>
-    <th>Deadline</th>
-    <th>Assignee</th>
-    <th>Phone</th>
-    <th>Status</th>
-    <th></th>
-    <th></th>
-  </tr>
+<div class="row">
+	
+	<div class="span8">
+		<h1>
+		<ng-pluralize count="tasks.length"
+				 when="{'0': 'Sorry, there are no tasks',
+				     'one': 'Listing 1 Task.',
+				     'other': 'Listing {} Tasks'}">
+		</ng-pluralize>
+		
+		</h1>
+		
+		<table class="table table-hover">
+			<thead>
+			  <tr>
+			    <th>Id</th>
+			    <th>Deadline</th>
+			    <th>Assignee</th>
+			    <th>Phone</th>
+			    <th>Status</th>
+			    <th></th>
+			    <th></th>
+			  </tr>
+			</thead>
+			
+			 <tbody>
+			  <tr ng-repeat="task in tasks">
+			    <td>{{task.id}}</td>
+			    <td>{{task.deadline}}</td>
+			    <td>{{task.assigned_name}}</td>
+			    <td>{{task.assigned_phone}}</td>
+			    <td>{{task.status}}</td>
+			    <td>
+			      <a href="" ng-click="getEvents(task.id)" class="btn btn-info">
+				Show
+			      </a>
+			    </td>
+			  </tr>
+			 </tbody>
+		  
+		</table>
+	
+	</div>
 
-  <tr ng-repeat="task in tasks">
-    <td>{{task.id}}</td>
-    <td>{{task.deadline}}</td>
-    <td>{{task.assigned_name}}</td>
-    <td>{{task.assigned_phone}}</td>
-    <td>{{task.status}}</td>
-    <td>
-      <a href="" class="btn" disabled>
-        Show
-      </a>
-    </td>
-  </tr>
+  <div class="span4">
+  <br>
+  <br>
   
-</table>
+	<div ng-show="have_events">
+		<br>
+		<h4 style="color:#474774">Events on selected task (id: {{selected_task}}) </h4>
+		<table  class="table table-hover">
+			 <thead>
+			  <tr>
+			    <th>Task Id</th>
+			    <th>Event</th>
+			    <th>Updated at</th>
+			  </tr>
+			 </thead>
+			  
+			<tbody>
+			  <tr ng-repeat="log in logs">
+			    <td>{{log.task_id}}</td>
+			    <td>{{log.action_name}}</td>
+			    <td>{{log.updated_at}}</td>
+			  </tr>
+			</tbody
+		  
+		</table>
+	</div>
+  </div>
 
 
-
-
-
-
+</div>

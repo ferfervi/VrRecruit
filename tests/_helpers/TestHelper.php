@@ -4,6 +4,7 @@ namespace Codeception\Module;
 
 use Codeception\TestCase;
 use Vreasy\Models\Task;
+use Vreasy\Models\Log;
 
 // here you can define custom functions for TestGuy
 class TestHelper extends \Codeception\Util\Framework
@@ -43,6 +44,29 @@ class TestHelper extends \Codeception\Util\Framework
         }
         \PHPUnit_Framework_Assert::assertTrue((bool) $task->save());
         return $task;
+
+    }
+    
+    public function haveLog($params = [])
+    {
+        $I = $this->getModule('DbzHelper');
+        $params = array_merge(
+            [
+                'updated_at' => gmdate(DATE_FORMAT),
+                'action_name' => 'pending',
+
+            ],
+            $params
+        );
+
+        if (isset($params['id'])) {
+            $log = Log::findOrInit($params['id']);
+            $log = Log::hydrate($log, $params);
+        } else {
+            $log = Log::instanceWith($params);
+        }
+        \PHPUnit_Framework_Assert::assertTrue((bool) $log->save());
+        return $log;
 
     }
 

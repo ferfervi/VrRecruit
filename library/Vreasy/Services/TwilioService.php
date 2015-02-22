@@ -21,6 +21,19 @@ class TwilioService
 	  
 		return $toReutrn;
 	}
+	
+	//TODO: implement these functions to send acks to the user after receiving his/her sms
+	//IMPROVEMENT: these functions could be implemented in only one function with the message to ack as parameter
+	public function ackRejected($phone)
+	{
+	}
+	public function ackAccepted($phone)
+	{
+	}
+	public function informUserWrongFormat($phone)
+	{
+	}
+	
 
 }
 ?>

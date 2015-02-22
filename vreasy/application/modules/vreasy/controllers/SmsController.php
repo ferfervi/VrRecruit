@@ -2,6 +2,8 @@
 
 use Vreasy\Models\Task;
 use Vreasy\Services\TwilioService;
+// We need to include the Log model because we are going to store an event on the task after the user reply
+use Vreasy\Models\Log;
 
 class Vreasy_SmsController extends Vreasy_Rest_Controller
 {
@@ -30,6 +32,7 @@ class Vreasy_SmsController extends Vreasy_Rest_Controller
 
 	 $body = $this->getRequest()->getRawBody();
          $data = Zend_Json::decode($body);
+         
          //debug..see what we receive from Xulio
          //$id=print_r($data,true);
          
@@ -40,8 +43,8 @@ class Vreasy_SmsController extends Vreasy_Rest_Controller
          * "messageSid" and we store here the task ID, so we can find easily the task linked to the sms
          */
              
-         $taskId=$data["MessageSid"];
-         $userReply=$data["Body"];
+         $taskId = $data["MessageSid"];
+         $userReply = $data["Body"];
          $phone = $data["From"];
          
          $processedResponse= $twilioService->processReply($userReply);
@@ -55,6 +58,14 @@ class Vreasy_SmsController extends Vreasy_Rest_Controller
 	 	 if($processedResponse == TwilioService::ACCEPTED_JOB)
          	 {
          	    $task->status= Task::TASK_ACCEPTED;
+         	    
+         	    //TASK 2) Now store in the task log this task event with the time happened
+         	    $log = new Log();
+         	    $log->task_id = $taskId;
+         	    $log->action_name= Task::TASK_ACCEPTED;
+         	    $log->save();
+         	    
+         	    
          	    /* send acknowledgement
          	     *
          	     * i.e: $twilioService->ackAccpeted($phone)
@@ -63,7 +74,15 @@ class Vreasy_SmsController extends Vreasy_Rest_Controller
          	 else if($processedResponse == TwilioService::REJECTED_JOB)
          	 {
          	    $task->status= Task::TASK_REJECTED;
-         	     /*send acknowledgement
+         	    
+         	    //TASK 2) Now store in the task log this task event with the time happened
+         	    $log = new Log();
+         	    $log->task_id = $taskId;
+         	    $log->action_name= Task::TASK_REJECTED;
+         	    $log->save();
+         	    
+         	    
+         	    /*send acknowledgement
          	      *
          	      * i.e: $twilioService->ackRejected($phone)
          	      */

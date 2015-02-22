@@ -4,38 +4,30 @@ namespace Vreasy\Models;
 
 use Vreasy\Query\Builder;
 
-class Task extends Base
+class Log extends Base
 {
     // Protected attributes should match table columns
     protected $id;
-    protected $deadline;
-    protected $assigned_name;
-    protected $assigned_phone;
-    protected $created_at;
-    protected $updated_at;
     
-    //Creating text field for storing task status (quicker approach). Ideally this would be a numerical value where we can map different status
-    protected $status;
+    protected $task_id;
+    protected $action_name;
+    protected $updated_at;
 
-    //let's define the constants for the values of the status
-    const TASK_ACCEPTED = "accepted";
-    const TASK_REJECTED = "rejected";
-    const TASK_PENDING = "pending";
     
     public function __construct()
     {
         // Validation is done run by Valitron library
         $this->validates(
             'required',
-            ['deadline', 'assigned_name', 'assigned_phone','status']
+            ['task_id', 'action_name']
         );
         $this->validates(
             'date',
-            ['created_at', 'updated_at']
+            ['updated_at']
         );
         $this->validates(
             'integer',
-            ['id']
+            ['task_id','id']
         );
     }
 
@@ -44,47 +36,42 @@ class Task extends Base
         // Base class forward all static:: method calls directly to Zend_Db
         if ($this->isValid()) {
             $this->updated_at = gmdate(DATE_FORMAT);
-            if ($this->isNew()) {
-                //new task created
-            	$this->created_at = $this->updated_at;
-                static::insert('tasks', $this->attributesForDb());
+          //  if ($this->isNew()) {
+          //IMP: we insert a new entry always for every event on a task	
+          
+                static::insert('logs', $this->attributesForDb());
                 $this->id = static::lastInsertId();
-                
-                //create an event in the task log setting the task as pending
-                 $log = new Log();
-                 $log->task_id = $this->id;
-         	 $log->action_name= Task::TASK_PENDING;
-         	 $log->save();
-                
-                
-                
-            } else {
+           // } 
+           /* else {
                 static::update(
-                    'tasks',
+                    'logs',
                     $this->attributesForDb(),
                     ['id = ?' => $this->id]
                 );
-            }
+            }*/
             return $this->id;
         }
     }
 
-    public static function findOrInit($id)
+    public static function findOrInit($task_id)
     {
-        $task = new Task();
-        if ($tasksFound = static::where(['id' => (int)$id])) {
-            $task = array_pop($tasksFound);
+        $log = new Log();
+        if ($logsFound = static::where(['task_id' => (int)$task_id])) {
+            $log = array_pop($logsFound);
         }
-        return $task;
+        return $log;
     }
     
-     public static function findById($id)
+    //There may be multiple events on a task_id: return all of them
+  public static function findById($task_id)
     {
-        $task = null;
-        if ($tasksFound = static::where(['id' => (int)$id])) {
-            $task = array_pop($tasksFound);
+        $log = null;
+        if ($logsFound = static::where(['task_id' => (int)$task_id])) {
+              while(!empty($logsFound))
+        	$log[] = array_pop($logsFound);
         }
-        return $task;
+
+        return $log;
     }
 
 
@@ -93,7 +80,7 @@ class Task extends Base
         // Default options' values
         $limit = 0;
         $start = 0;
-        $orderBy = ['created_at'];
+        $orderBy = ['updated_at'];
         $orderDirection = ['asc'];
         extract($opts, EXTR_IF_EXISTS);
         $orderBy = array_flatten([$orderBy]);
@@ -104,10 +91,10 @@ class Task extends Base
         // Build the query
         list($where, $values) = Builder::expandWhere(
             $params,
-            ['wildcard' => true, 'prefix' => 't.']);
+            ['wildcard' => true, 'prefix' => 'l.']);
 
         // Select header
-        $select = "SELECT t.* FROM tasks AS t";
+        $select = "SELECT l.* FROM logs AS l";
 
         // Build order by
         foreach ($orderBy as $i => $value) {
