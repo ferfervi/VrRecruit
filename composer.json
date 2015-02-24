@@ -2,7 +2,7 @@
     "license": "proprietary",
     "config":{
       "github-oauth":{
-         "github.com":"TOK3"
+         "github.com":TOK3
       }
     },
     "repositories": [
