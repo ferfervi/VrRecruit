@@ -27,6 +27,8 @@ Getting started
 3. [Install composer](http://getcomposer.org/doc/00-intro.md) and projects dependencies
 
     ```
+   
+   *NOTE: in order to run to compile in CIRCLECI and due to a recent change in github, the composer.json has to be modified, removing the config section and add the token and config setion directly in the CircleCI (otherwhise your token will be deleted from github after the commit and CircleCI will fail)
     composer install --dev
     ```
 4. Create the database and setup the db user permissions (See the [db.ini](blob/master/task-confirmation/application/configs/db.ini)).
