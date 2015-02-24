@@ -2,7 +2,7 @@
     "license": "proprietary",
     "config":{
       "github-oauth":{
-         "github.com":"ed339318c2b1e1fd441efc3171a7ed6894eb7574"
+         "github.com":"cf1f4194c12ca49c5b20c1db72342acae9439267"
       }
     },
     "repositories": [
